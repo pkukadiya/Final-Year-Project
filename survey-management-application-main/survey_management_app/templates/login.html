@@ -1,0 +1,58 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title -->
+    <title>Login</title>
+
+    <!-- Css files -->
+    <link rel="stylesheet" href="{%static 'css/login.css'%}">
+    <link rel="stylesheet" href="{%static 'css/index.css'%}">
+
+    <!-- Font  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="header">
+    <a id="indeximg" href="index"><div id="left">
+      <img src="{%static 'images/logo.svg'%}" alt="" id="logo">
+  </div></a>
+  </div>
+  <div id="outerbox">
+    <div id="loginbox">
+      <h1>Login</h1>
+      <div id="loginform">
+        <div id="error">{%for message in messages%}{{message}}{%endfor%}</div>
+        <form action="loginuser" method="POST" enctype="multipart/form-data">
+          {%csrf_token%}
+          <label  id="email" for="email">Username or Email</label>
+          <input type="text" id="email_box" name="email" required>
+          <label id="password" for="password">Password</label>
+          <input id="password_box" type="password" name="password" required>
+          <a id="forget" href="forgotpassword">Forgot password?</a>
+          <script src='https://www.google.com/recaptcha/api.js'></script>
+          <div class="g-recaptcha" data-sitekey="site-key"></div>
+          <input type="submit" id="login_button" value="Login">
+          <p id="new">Don't have an account? <a id="signup" href="signup">Sign-up</a></p>
+        </form>
+      </div>
+    </div> 
+    <div id="right_image">
+      <img id="right_img" src="{%static 'images/right_img.svg'%}" alt="">
+    </div>  
+  </div>
+  <script>
+    var data = document.getElementById("error").innerHTML;
+    if (data == ''){
+      document.getElementById("error").style.display = "none";
+    }
+  </script>
+</body>
+</html>

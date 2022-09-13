@@ -1,0 +1,63 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title -->
+    <title>Contact Us</title>
+
+    <!-- Css files -->
+    <link rel="stylesheet" href="{%static 'css/login.css'%}">
+    <link rel="stylesheet" href="{%static 'css/index.css'%}">
+
+    <!-- Font  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        #loginbox h1{
+            margin-top: 65px;
+        }
+    </style>
+</head>
+<body>
+  <div id="header">
+    <a id="indeximg" href="index"><div id="left">
+      <img src="{%static 'images/logo.svg'%}" alt="" id="logo">
+  </div></a>
+  </div>
+  <div id="outerbox">
+    <div id="loginbox">
+      <h1>Email</h1>
+      <div id="loginform">
+        <div id="error">{%for message in messages%}{{message}}{%endfor%}</div>
+        <form action="contactusform" method="POST" enctype="multipart/form-data">
+          {%csrf_token%}
+          <label  id="name" for="name">Full Name</label>
+          <input type="text" id="name_box" name="name" required>
+          <label  id="email" for="email">Email</label>
+          <input type="email" id="email_box" name="email" required>
+          <label id="password" for="password">Subject</label>
+          <input id="password_box" type="text" name="subject" required>
+          <label id="password" for="password">Message</label>
+          <input id="password_box" type="text" name="message" required>
+          <input type="submit" id="login_button" value="Send">
+        </form>
+      </div>
+    </div> 
+    <div id="right_image">
+      <img id="right_img" src="{%static 'images/contact_right.svg'%}" alt="">
+    </div>  
+  </div>
+  <script>
+    var data = document.getElementById("error").innerHTML;
+    if (data == ''){
+      document.getElementById("error").style.display = "none";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title -->
+    <title>Home</title>
+
+    <!-- Local styling -->
+    <link rel="stylesheet" href="{%static 'css/index.css' %}">
+    <link rel="stylesheet" href="{%static 'css/home.css'%}">
+
+    <!-- Font  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <!-- For jquery and ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>  
+    <style>
+        #top{
+            height: 240px !important;
+        }
+        .survey{
+            background-color: #EEEEEE;
+            width: 230px;
+            height: 195px;
+            margin-left: 20px;
+        }
+        .img_survey{
+            width: 100%;
+        }
+        .survey a{
+            text-decoration: none;
+            color: rgb(115, 115, 115);
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .allsurvey{
+            margin-top: 30px !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <a id="indeximg" href="index"><div id="left">
+            <img src="{%static 'images/logo.svg'%}" alt="" id="logo">
+        </div></a>
+        <div id="right">
+                <a href="logout">{{username}}</a>
+        </div>
+    </div>
+    <div id="top">
+        <div id="top_container">
+            <div id="newform">
+                <a href="newform">
+                    <img id="plus" src="{%static 'images/plus sign.svg'%}" alt="">
+                </a>
+            </div>
+            <div id="recent_survey">
+                {%for x in recent%}
+                    <div  class="survey">
+                        <a onclick="opensurvey('{{x.id}}')"><img class="img_survey" src="{%static 'images/home_surveyback.png'%}" alt="">
+                        <a onclick="opensurvey('{{x.id}}')">{{x.surveyname}}</a> <br></a>
+                        <a id="deletesurvey" onclick="deletesurvey('{{x.id}}')">Delete Survey</a>
+                    </div>
+                {%endfor%}
+            </div>
+        </div>
+    </div>
+    <div class="allsurvey">
+        {%for x in survey%}
+        <div  class="survey">
+            <a onclick="opensurvey('{{x.id}}')"><img class="img_survey" src="{%static 'images/home_surveyback.png'%}" alt="">
+            <a onclick="opensurvey('{{x.id}}')">{{x.surveyname}}</a> <br></a>
+            <a id="deletesurvey" onclick="deletesurvey('{{x.id}}')">Delete Survey</a>
+        </div>
+        {%endfor%}
+    </div>
+    <script>
+        function opensurvey(id){
+            $.ajax({
+                    type: 'GET',
+                    url : "opensurvey",
+                    data : {    
+                        
+                        'surveyid':id
+                        
+                    },
+                    success: function(response){
+                        window.location.href = response;
+                    },
+                    error: function(response){
+                        alert("some error occured please contact system admin")
+                    }
+                });
+        }
+    </script>
+    <script>
+        function deletesurvey(id){
+            $.ajax({
+                    type: 'GET',
+                    url : "deletesurvey",
+                    data : {    
+                        
+                        'surveyid':id
+                        
+                    },
+                    success: function(response){
+                        window.location.href = response;
+                    },
+                    error: function(response){
+                        alert("some error occured please contact system admin")
+                    }
+                });
+        }
+    </script>
+</body>
+</html>

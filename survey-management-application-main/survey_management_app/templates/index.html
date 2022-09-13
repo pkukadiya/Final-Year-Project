@@ -1,0 +1,75 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- title -->
+    <title>Surveys</title>
+
+    <!-- Local styling -->
+    <link rel="stylesheet" href="{%static 'css/index.css' %}">
+
+    <!-- Font  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <!-- For jquery and ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>    
+</head>
+<body>
+    <div id="header">
+        <a id="indeximg" href="index"><div id="left">
+            <img src="{%static 'images/logo.svg'%}" alt="" id="logo">
+        </div></a>
+        <div id="right">
+                <a href="#overflow">Overview</a>
+                <a href="#features">Features</a>
+                <a href="#aboutus">About Us</a>
+                <a href="contact">Contact Us</a>
+                {%if username == 'Login'%}
+                    <a href="login">Login</a>
+                {%else%}
+                    <a href="logout">{{username}}</a>
+                {%endif%}
+        </div>
+    </div>
+    <div id="overview">
+        <div id="left_overview">
+            <p>Quick and easy survey forms in minutes just for you.</p> <br>
+            <a href="login">Go to Survey</a>
+        </div>
+        <div id="right_overview">
+            <img src="{%static 'images/overview.svg'%}" alt="">
+        </div>
+    </div>
+    <div id="features">
+        <div id="right_features">
+            <h4>Create an online form as easily as creating a document</h4>
+            <p>Select from multiple question types, share your forms easily, See everyone's responses, and customize values as easily as pasting a list.</p> <br>
+        </div>
+        <div id="left_features">
+            <img src="{%static 'images/features.svg'%}" alt="">
+            
+        </div>
+    </div>
+    <div id="aboutus">
+        <div id="left_aboutus">
+            <h4>Hello My name is namehere</h4>
+            <p>My focus is on E-commerce development, making this my project for the topic E-commerce website development in Django/Python</p> <br>
+        </div>
+        <div id="right_aboutus">
+            <img src="{%static 'images/aboutus.svg'%}" alt="">
+        </div>
+    </div>
+    <div id="spots">
+        {%include 'spots.html'%}
+        {%block content2%}
+        {%endblock%}
+    </div>
+</body>
+</html>

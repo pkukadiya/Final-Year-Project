@@ -1,0 +1,121 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- meta tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- local css -->
+    <link rel="stylesheet" href="{%static 'css/index.css' %}">
+    <link rel="stylesheet" href="{%static 'css/newform.css' %}">
+    <link rel="stylesheet" href="{%static 'css/opensurvey.css' %}">
+    <!-- title -->
+    <title>{{survey.surveyname}}</title>
+
+    <!-- For jquery and ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>   
+    
+    <!-- Font  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
+
+    <!-- QR code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+  
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        body{
+            height: 100vh;
+        }
+        #center a{
+            text-decoration: none;
+            color: black;
+            padding-right: 20px;
+        }
+        #share{
+            background-color: #004B85;
+            padding: 12px 20px;
+            border-radius: 12px;
+            color: white !important;
+            text-decoration: none;
+            margin-top: -17px;
+        }
+        .qr-code {
+            max-width: 200px;
+            margin: 10px;
+        }
+        #secondpart{
+            flex-direction: column;
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            align-self: center;
+            width: 100%;
+            padding-left: 100px;
+            padding-right: 100px;
+        }
+        #searchbar{
+            outline: none;
+            height: 50px;
+            margin-bottom: 50px;
+            border: none;
+        }
+        #myTable{
+            background-color: white;
+        }
+     </style>  
+</head>
+<body>
+    <div id="header">
+        <a id="indeximg" href="index"><div id="left">
+            <img src="{%static 'images/logo.svg'%}" alt="" id="logo">
+        </div></a>
+        <div id="center">
+            <a href="">Questions</a>
+            <a href="responses">Responses</a>
+            <a href="">Settings</a>
+        </div>
+
+        <div id="right">
+            <a href="logout">{{username}}</a>
+            <a id="share" onclick="shareformcode()" href="javascript:void(0)">Share</a>
+        </div>
+    </div>
+    <div id="secondpart">
+        <input type="text" placeholder="Search" id="searchbar">
+        <div id="all_answers">
+            <table  class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Email</th>
+                        <th scope="col">Starttime</th>
+                        <th scope="col">Endtime</th>
+                        <th scope="col">View</th>
+                    </tr>
+                </thead>
+                <tbody id="myTable">
+                    {% for x in responses%}
+                    <tr>
+                        {%if x.anonymous == True%}
+                        <td>Anonymous</td>
+                        {% else %}
+                        <td>{{x.email}}</td>
+                        {%endif%}
+                        <td>{{x.starttime}}</td>
+                        <td>{{x.endtime}}</td>
+                        <td><a href="viewresponse/{{x.id}}">View</a></td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

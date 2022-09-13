@@ -1,0 +1,126 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- meta tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- local css -->
+    <link rel="stylesheet" href="{%static 'css/index.css' %}">
+    <link rel="stylesheet" href="{%static 'css/newform.css' %}">
+    <link rel="stylesheet" href="{%static 'css/opensurvey.css' %}">
+    <!-- title -->
+    <title>{{survey.surveyname}}</title>
+
+    <!-- For jquery and ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>   
+    
+    <!-- Font  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
+
+    <!-- QR code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+  
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        body{
+            height: auto;
+            background: linear-gradient(180.01deg, #FFFFFF 0.44%, #004B85 85.46%);
+        }
+        #center a{
+            text-decoration: none;
+            color: black;
+            padding-right: 20px;
+        }
+        #share{
+            background-color: #004B85;
+            padding: 12px 20px;
+            border-radius: 12px;
+            color: white !important;
+            text-decoration: none;
+            margin-top: -17px;
+        }
+        .qr-code {
+            max-width: 200px;
+            margin: 10px;
+        }
+        #secondpart{
+            flex-direction: column;
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            align-self: center;
+            width: 100%;
+            padding-left: 100px;
+            padding-right: 100px;
+        }
+        #searchbar{
+            outline: none;
+            height: 50px;
+            margin-bottom: 50px;
+            border: none;
+        }
+        #myTable{
+            background-color: white;
+        }
+        #email,#starttime,#endtime,.questions,.answers{
+            width: 100%;
+            height: 45px;
+            border: none;
+            outline: none;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+        }
+        .details{
+            padding: 20px 25px;
+            border-radius: 25px;
+            background-color: #a4d8ff70;
+            margin-bottom: 20px;
+        }
+     </style>  
+</head>
+<body>
+    <div id="header">
+        <a id="indeximg" href="index"><div id="left">
+            <img src="{%static 'images/logo.svg'%}" alt="" id="logo">
+        </div></a>
+        <div id="center" style="margin-right: 500px;">
+            <a href="">Questions</a>
+            <a href="responses">Responses</a>
+            <a href="">Settings</a>
+        </div>
+    </div>
+    <div id="secondpart">
+        <div class="details">
+            {% if response.anonymous == True%}
+            <input id="email" type="text" readonly value="Anonymous">
+            {%else%}
+            <input id="email" type="text" readonly value="{{response.email}}">
+            {%endif%}
+            <input id="starttime" type="text" readonly value="{{response.starttime}}">
+            <input id="endtime" type="text" readonly value="{{response.endtime}}">
+        </div>
+        <div id="answers">
+        </div>
+    </div>
+    <script>
+        data ='{{response.json}}'
+        data =data.replaceAll('&quot;','"')
+        data1 = JSON.parse(data)
+        for(var i=0;i<data1.length;i++){
+            question = data1[i]['question']
+            answer = data1[i]['answer']
+            var to_be_added = '<div class="details"><label for="ques'+i+'">Ques '+i+'</label> <input class="questions" id="ques'+i+'" type="text" readonly value="'+question+'"> <label for="ans'+i+'">Ans</label><input class="answers" id="ans'+i+'" type="text" readonly value="'+answer+'"></div>'
+            $("#answers").append(to_be_added); 
+        }
+    </script>
+</body>
+</html>

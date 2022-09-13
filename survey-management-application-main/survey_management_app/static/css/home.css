@@ -1,0 +1,33 @@
+#top{
+    background-color: #DBDBDB;
+    height: 200px;
+    
+}
+#top_container{
+    display: flex;
+    width: 90%;
+    padding-left: 25px;
+    
+    padding-top: 25px;
+    justify-content: center;
+    align-items: center;
+}
+body{
+    height: 100vh;
+}
+#recent_survey,.allsurvey{
+    display: flex;
+    flex-wrap: wrap;
+}
+#newform a{
+    background-color: white;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    ;
+}
+#plus{
+    width: 100px;
+}

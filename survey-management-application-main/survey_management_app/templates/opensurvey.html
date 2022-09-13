@@ -1,0 +1,344 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- meta tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- local css -->
+    <link rel="stylesheet" href="{%static 'css/index.css' %}">
+    <link rel="stylesheet" href="{%static 'css/newform.css' %}">
+    <link rel="stylesheet" href="{%static 'css/opensurvey.css' %}">
+    <!-- title -->
+    <title>{{survey.surveyname}}</title>
+
+    <!-- For jquery and ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>   
+    
+    <!-- Font  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
+
+    <!-- QR code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+  
+    <style>
+        #center a{
+            text-decoration: none;
+            color: black;
+            padding-right: 20px;
+        }
+        #share{
+            background-color: #004B85;
+            padding: 12px 20px;
+            border-radius: 12px;
+            color: white !important;
+            text-decoration: none;
+            margin-top: -17px;
+        }
+        .qr-code {
+            max-width: 200px;
+            margin: 10px;
+        }
+     </style>  
+</head>
+<body>
+    <div id="header">
+        <a id="indeximg" href="index"><div id="left">
+            <img src="{%static 'images/logo.svg'%}" alt="" id="logo">
+        </div></a>
+        <div id="center">
+            <a href="">Questions</a>
+            <a href="responses/{{survey.id}}">Responses</a>
+            <a href="">Settings</a>
+        </div>
+
+        <div id="right">
+            <a href="logout">{{username}}</a>
+            <a id="share" onclick="shareformcode()" href="javascript:void(0)">Share</a>
+        </div>
+    </div>
+
+    <form action="javascript:void(0)">
+        <div id="innerform">
+            <div id="maininfoform">
+                <input onClick="this.select();" value="{{survey.surveyname}}" type="text" required placeholder="Survey Name" name="surveyname" id="surveyname"><br>
+                <input onClick="this.select();" value="{{survey.description}}" type="text" required placeholder="Survey Description" name="surveydescription" id="surveydescription"><br>
+            </div>
+            <div id="addquestionshere">
+                
+            </div>
+            
+            
+            <button id="myBtn">Add New</button>
+
+            <input type="submit" id="submit" onclick="createjson()" value="Submit">
+        </div>
+    </form>
+
+
+    <div id="myModal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+            <span class="close">&times;</span>
+            <h2>Choose a type of question</h2>
+            </div>
+            <div class="modal-body">
+            <div class="radio">
+                <a class="modaltext" href="javascript:void(0)" onclick="addquestion('1')">Rating</a>
+                <a class="modaltext" href="javascript:void(0)" onclick="addquestion('2')">Multiple</a>
+                <a class="modaltext" href="javascript:void(0)" onclick="addquestion('4')">Value</a>
+                
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="share_modal">
+        <div id="share_modal_content">
+            <div id="share_modal_header">
+                <span onclick="closemodal()" id="share_modal_close">&times;</span>
+                <h2>Share this form</h2>
+            </div>
+            <div id="share_modal_body">
+                <input type="text" id="shareemail" placeholder="Enter email of everyone you want to able to access your forms" data-shareable="false"><br>
+                <button id="addemailbutton" onclick="addemail()">Add Email to List</button>
+                <div id="addemailshere">
+                    <p>Currently accessable by  : </p><br>
+                    {%for x in emaillist%}
+                    <p class='emailstoaccess'>{{x}}</p>
+                    {%endfor%}
+                </div>
+                <input value="https://insertherokulinkhere/takesurvey/{{survey.id}}" id="shareablelink" type="text" readonly><br>
+                <img src="https://chart.googleapis.com/chart?cht=qr&chl=https://insertherokulinkhere/takesurvey/{{survey.id}}&chs=160x160&chld=L|0"class="qr-code img-thumbnail img-responsive" /><br>
+                <a style="color:black; text-decoration:none;" id="linksharebyall" href="javascript:void(0)" onclick="shareable()">Make Link Accessable by anyone</a><br>
+                <a style="color:green; text-decoration:none;" id="linksharebyselect" href="javascript:void(0)" onclick="shareablerev()">Make Link Accessable by only selected people</a><br>
+                <button onclick="sendshareinfoback()" id="savedata">Save Data</button>
+            </div>
+
+        </div>
+    </div>
+
+    
+    
+    <script>
+        function shareable(){
+            document.getElementById('shareemail').setAttribute('data-shareable',"true")
+            document.getElementById('linksharebyall').style.color = "green"
+            document.getElementById('linksharebyselect').style.color = "black"
+
+        }
+        function shareablerev(){
+            document.getElementById('shareemail').setAttribute('data-shareable',"false")
+            
+            document.getElementById('linksharebyall').style.color = "black"
+            document.getElementById('linksharebyselect').style.color = "green"
+        }
+        function shareformcode(){
+            document.getElementById('share_modal').style.display="block";
+        }
+        function closemodal(){
+            document.getElementById('share_modal').style.display="none";
+        }
+        function addemail(){
+            var email = document.getElementById('shareemail').value;
+            var temp = "<p class='emailstoaccess'>"+email+"</p>";
+            $("#addemailshere").append(temp);
+            document.getElementById('shareemail').value = "";
+        }
+        function sendshareinfoback(){
+            element = document.getElementById('shareemail').getAttribute('data-shareable')
+            if(element == "false"){
+                emaillist = "";
+                $(".emailstoaccess").each(function(){
+                    emaillist = emaillist+$(this).text()+",";
+                });
+                console.log(emaillist);
+                $.ajax({
+                     type: "GET",
+                     url: "sendshareinfoback",
+                     data : {
+                         'surveyid':'{{survey.id}}',
+                         'emaillist':emaillist,
+                         'allowed':'false'
+                       
+                     },
+                     success: function(data){
+                         window.location.href = data;
+                     }
+                 });
+            }
+            else{
+                $.ajax({
+                    type: "GET",
+                    url: "sendshareinfoback",
+                    data : {
+                        'surveyid':'{{survey.id}}',
+                        'emaillist':'emaillist',
+                        'allowed':'true'
+                        
+                    },
+                    success: function(data){
+                        window.location.href = data;
+                    }
+                });
+            }
+        }
+    </script>
+
+
+    <script>
+        flag=1
+        data ='{{data}}'
+        data =data.replaceAll('&quot;','"')
+        data1 = JSON.parse(data)
+
+        //to set prev questions
+        for(var i = 0 ; i < data1.length ; i++){
+            if (data1[i]['type'] == 'rating'){
+                temp="<div id='quesouterid"+flag+"' class='quesouter'><p class='quesp'>Question "+flag+".</p> <input onClick='this.select();' value='"+data1[i]['question']+"' required class='ratingques' type='text' placeholder='Enter Question' name='q"+flag+"' id='q"+flag+"' data-type= 'rating' ><br><button onclick='removeques("+flag+")' class='removequestion'>Remove Question</button></div><br>"
+                $("#addquestionshere").append(temp); 
+            }
+            if (data1[i]['type'] == 'multiple'){
+                temp="<div id='quesouterid"+flag+"' class='quesouter'><p class='quesp'>Question "+flag+".</p><input onClick='this.select();' value='"+data1[i]['question']+"' required class='multipleques' type='text' placeholder='Enter Question' name='q"+flag+"' id='q"+flag+"' data-type= 'multiple'><br><input onClick='this.select();' value='"+data1[i]['options'][0]+"' required class='multipleoption' type='text' placeholder='Enter Multiple Option 1' name='q"+flag+"o1' id='q"+flag+"o1' data-type= 'multiple'><br><input onClick='this.select();' value='"+data1[i]['options'][1]+"' required class='multipleoption' type='text' placeholder='Enter Multiple Option 2' name='q"+flag+"o2' id='q"+flag+"o2' data-type= 'multiple'><br><input onClick='this.select();' value='"+data1[i]['options'][2]+"' required class='multipleoption' type='text' placeholder='Enter Multiple Option 3' name='q"+flag+"o3' id='q"+flag+"o3' data-type= 'multiple'><br><input onClick='this.select();' value='"+data1[i]['options'][3]+"' required class='multipleoption' type='text' placeholder='Enter Multiple Option 4' name='q"+flag+"o4' id='q"+flag+"o4' data-type= 'multiple'><br><button onclick='removeques("+flag+")' class='removequestion'>Remove Question</button></div><br>"
+                $("#addquestionshere").append(temp); 
+            }
+            
+            if (data1[i]['type'] == 'value'){
+                temp="<div id='quesouterid"+flag+"' class='quesouter'><p class='quesp'>Question "+flag+".</p> <input onClick='this.select();' value='"+data1[i]['question']+"' required class='ratingques' type='text' placeholder='Enter Question' name='q"+flag+"' id='q"+flag+"' data-type= 'rating' ><br><button onclick='removeques("+flag+")' class='removequestion'>Remove Question</button></div><br>"
+                $("#addquestionshere").append(temp); 
+            }
+            flag++;
+        }
+    </script>
+    
+
+
+
+<script>
+    function removeques(id){
+        $("#quesouterid"+id).remove();
+    }
+</script>
+
+<script>
+    data ='{{data}}'
+    data =data.replaceAll('&quot;','"')
+    data1 = JSON.parse(data)
+    flag =data1.length+1;
+    function addquestion(id){
+        if (id == 1){
+            temp="<div id='quesouterid"+flag+"' class='quesouter'><p class='quesp'>Question "+flag+".</p> <input onClick='this.select();' value='Enter Question' required class='ratingques' type='text' placeholder='Enter Question' name='q"+flag+"' id='q"+flag+"' data-type= 'rating' ><br><button onclick='removeques("+flag+")' class='removequestion'>Remove Question</button></div><br>"
+            $("#addquestionshere").append(temp); 
+        }
+        if(id == 2){
+            temp="<div id='quesouterid"+flag+"' class='quesouter'><p class='quesp'>Question "+flag+".</p><input onClick='this.select();' value='Enter Question' required class='multipleques' type='text' placeholder='Enter Question' name='q"+flag+"' id='q"+flag+"' data-type= 'multiple'><br><input onClick='this.select();' value='Option 1' required class='multipleoption' type='text' placeholder='Enter Multiple Option 1' name='q"+flag+"o1' id='q"+flag+"o1' data-type= 'multiple'><br><input onClick='this.select();' value='Option 2' required class='multipleoption' type='text' placeholder='Enter Multiple Option 2' name='q"+flag+"o2' id='q"+flag+"o2' data-type= 'multiple'><br><input onClick='this.select();' value='Option 3' required class='multipleoption' type='text' placeholder='Enter Multiple Option 3' name='q"+flag+"o3' id='q"+flag+"o3' data-type= 'multiple'><br><input onClick='this.select();' value='Option 4' required class='multipleoption' type='text' placeholder='Enter Multiple Option 4' name='q"+flag+"o4' id='q"+flag+"o4' data-type= 'multiple'><br><button onclick='removeques("+flag+")' class='removequestion'>Remove Question</button></div><br>"
+            $("#addquestionshere").append(temp);
+        }
+        
+        if (id == 4){
+            temp="<div id='quesouterid"+flag+"' class='quesouter'><p class='quesp'>Question "+flag+".</p><input onClick='this.select();' value='Enter Question' required class='valueques' type='text' placeholder='Enter Question' name='q"+flag+"' id='q"+flag+"' data-type= 'value'><br><button onclick='removeques("+flag+")' class='removequestion'>Remove Question</button></div><br>"
+            $("#addquestionshere").append(temp);
+        }
+        flag ++;
+        document.getElementById("myModal").style.display="none";
+        
+    }
+    function createjson(){
+        var surveyname = document.getElementById("surveyname").value;
+        var surveydescription = document.getElementById("surveydescription").value;
+        json=[]
+        if(surveydescription != "" && surveyname != ""){
+        for(var i = 1;i<flag;i++){
+            try{
+                var element = document.getElementById('q'+i);
+                var dataID = element.getAttribute('data-type');
+                if(dataID == 'rating'){
+                    var q = element.value;
+                    var obj = {
+                        "question":q,
+                        "type":dataID,
+                    }
+                    json.push(obj);
+                }
+                if(dataID == 'multiple'){
+                    option1=document.getElementById("q"+i+"o1").value;
+                    option2=document.getElementById("q"+i+"o2").value;
+                    option3=document.getElementById("q"+i+"o3").value;
+                    option4=document.getElementById("q"+i+"o4").value;
+                    var q = element.value;
+                    var obj = {
+                        "question":q,
+                        "type":dataID,
+                        "options":[option1,option2,option3,option4]
+                    }
+                    json.push(obj);
+                }
+                
+                if(dataID == 'value'){
+                    var q = element.value;
+                    var obj = {
+                        "question":q,
+                        "type":dataID,
+                    }
+                    json.push(obj);
+                }
+            }
+            catch(err){
+                continue;
+            }
+        }
+    }
+        json = JSON.stringify(json)
+        sendback(surveyname,surveydescription,json);
+    }
+    function sendback(surveyname,surveydescription,json){
+    $.ajax({
+                type: 'GET',
+                url : "updatesurvey",
+                data : {    
+                    
+                    'surveyname':surveyname,
+                    'surveydescription':surveydescription,
+                    'surveyid':'{{survey.id}}',
+                    'json':json,
+                    
+                },
+                success: function(response){
+                    window.location.href = response;
+                },
+                error: function(response){
+                    alert("some error occured please contact system admin")
+                }
+            });
+        }
+</script>
+
+<script>
+    var modal = document.getElementById("myModal");
+
+    var btn = document.getElementById("myBtn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal 
+    btn.onclick = function() {
+    modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+    modal.style.display = "none";
+    }
+
+    
+</script>
+</body>
+</html>

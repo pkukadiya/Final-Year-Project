@@ -1,0 +1,271 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta Tags  -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title -->
+    <title>Surveys</title>
+
+     <!-- local css -->
+     <link rel="stylesheet" href="{%static 'css/index.css'%}">
+     <link rel="stylesheet" href="{%static 'css/takesurvey.css' %}">
+     <link rel="stylesheet" href="{%static 'css/newform.css' %}">
+ 
+     <!-- For jquery and ajax -->
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>   
+     
+     <!-- Font  -->
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+     <style>
+        
+        #checkifaccessable{
+            height: 100vh;
+            display:none;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+        #inner_checkifaccessable{
+            border-radius: 25px;
+            background-color: #ffffff;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 350px;
+            width: 40%;
+        }
+        #inner_checkifaccessable input{
+            outline: none;
+            background-color: #EEEEEE;
+            border: none;
+            color: black;
+            padding: 12px;
+            border-radius: 10px;
+            width: 90%;
+            margin-bottom: 12px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        #inner_checkifaccessable button{
+            font-size: 20px;
+            background-color: #004B85;
+            color: white;
+            text-decoration: none;
+            outline: none;
+            border: none;
+            border-radius: 10px;
+            padding:10px 25px;
+        }
+        #anonymoussubmission{
+            margin-top: 20px;
+        }
+     </style> 
+</head>
+<body onload="starttime()">
+    <div id="checkifaccessable">
+        <div id="inner_checkifaccessable">
+            <input type="text" id="tellsus" value="Exist" style="visibility: hidden;">
+            <input type="email" id="checkemail" placeholder="Enter your email id"><br>
+            <button style="cursor: pointer;" onclick="checkmail()">Submit</button>
+            <button id="anonymoussubmission" style="cursor: pointer;" onclick="checkmailanonymous()">Submit Anonymously</button>
+        </div>
+    </div>
+    <form id="form_to_be_filled" action="javascript:void(0)">
+        <div id="innerform">
+            <div id="maininfoform">
+                <input value="{{survey.name}}" type="text" readonly placeholder="Survey Name" name="surveyname" id="surveyname"><br>
+                <input value="{{survey.description}}" type="text" readonly placeholder="Survey Description" name="surveydescription" id="surveydescription"><br>
+            </div>
+            <div id="addquestionshere">
+                
+            </div>
+            <input onclick="createjson()" type="submit" id="submit" value="Submit">
+        </div>
+    </form>
+    {% if accessable == True %}
+    <input type="text" value="YES" style="visibility: hidden;" id="tellsus_toallow">
+    {% endif %}
+    <input id="stores_email" style="visibility: hidden;" type="text" value="">
+    <input id="stores_anonymous" style="visibility: hidden;" type="text" value="False">
+    <!-- Checks accessability -->
+    <script>
+        function checkmailanonymous(){
+            if(document.getElementById('tellsus_toallow').value == "YES"){
+                document.getElementById("stores_anonymous").value = "True";
+                document.getElementById("checkifaccessable").style.display = "none";
+                document.getElementById("form_to_be_filled").style.display = "flex";
+
+            }
+            else{
+                alert("This form cannot be submitted anonymously")
+                document.getElementById("stores_anonymous").value = "False";
+            }
+        }
+    </script>
+    <script>
+        if(document.getElementById('tellsus').value == "Exist"){
+            document.getElementById('form_to_be_filled').style.display = "none";
+            document.getElementById('checkifaccessable').style.display = "flex";
+        }
+        function checkmail(){
+            mail = document.getElementById('checkemail').value;
+            document.getElementById('stores_email').value = mail;
+            allowed = '{{emaillist}}';
+            alllowedList = allowed.split(',');
+            var flag = 0;
+            if(document.getElementById('tellsus_toallow').value == "YES"){
+                document.getElementById("checkifaccessable").style.display = "none";
+                document.getElementById("form_to_be_filled").style.display = "flex";
+                flag++;
+            }
+            
+            for (i = 0; i < alllowedList.length; i++) {
+                if(mail == alllowedList[i]){
+                    if(mail != '' && alllowedList[i] != 'emaillis'){
+                        document.getElementById("checkifaccessable").style.display = "none";
+                        document.getElementById("form_to_be_filled").style.display = "flex";
+                        flag++;
+                    }
+                }
+            }
+            if(flag == 0){
+                alert("You are not allowed to fill this form");
+            }
+        }
+    </script>
+    <!-- Presents Question -->
+    <script>
+        flag=1
+        data ='{{survey.json}}'
+        data =data.replaceAll('&quot;','"')
+        data1 = JSON.parse(data)
+
+        //to set prev questions
+        for(var i = 0 ; i < data1.length ; i++){
+            if (data1[i]['type'] == 'rating'){
+                temp="<div id='quesouterid"+flag+"' class='quesouter'><p class='quesp'>Question "+flag+".</p> <input readonly  value='"+data1[i]['question']+"' required class='ratingques' type='text' placeholder='Enter Question' name='q"+flag+"' id='q"+flag+"' data-type= 'rating' ><br><select class='rankingselect' data-anstype='rating' name='' id='ans_"+flag+"'><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option></select></div><br>"
+                $("#addquestionshere").append(temp); 
+            }
+            if (data1[i]['type'] == 'multiple'){
+                temp="<div id='quesouterid"+flag+"' class='quesouter'><p class='quesp'>Question "+flag+".</p><input readonly  value='"+data1[i]['question']+"' required class='multipleques' type='text' placeholder='Enter Question' name='q"+flag+"' id='q"+flag+"' data-type= 'multiple'><br><input readonly  value='"+data1[i]['options'][0]+"' required class='multipleoption' type='text' placeholder='Enter Multiple Option 1' name='q"+flag+"o1' id='q"+flag+"o1' data-type= 'multiple'><input type='radio' data-anstype='multiple' name='option_1_"+flag+"' id='ans_"+flag+"'><br><input readonly  value='"+data1[i]['options'][1]+"' required class='multipleoption' type='text' placeholder='Enter Multiple Option 2' name='q"+flag+"o2' id='q"+flag+"o2' data-type= 'multiple'><input type='radio' name='option_1_"+flag+"' data-anstype = 'multilpe' id='ans_"+flag+"_2'><br><input readonly  value='"+data1[i]['options'][2]+"' required class='multipleoption' type='text' placeholder='Enter Multiple Option 3' name='q"+flag+"o3' id='q"+flag+"o3' data-type= 'multiple'><input type='radio' name='option_1_"+flag+"' data-anstype id='ans_"+flag+"_3'><br><input readonly  value='"+data1[i]['options'][3]+"' required class='multipleoption' type='text' placeholder='Enter Multiple Option 4' name='q"+flag+"o4' id='q"+flag+"o4' data-type= 'multiple'><input type='radio' data-anstype='multiple' name='option_1_"+flag+"' id='ans_"+flag+"_4'><br></div><br>"
+                $("#addquestionshere").append(temp); 
+            }
+            
+            if (data1[i]['type'] == 'value'){
+                temp="<div id='quesouterid"+flag+"' class='quesouter'><p class='quesp'>Question "+flag+".</p> <input readonly  value='"+data1[i]['question']+"' required class='ratingques' type='text' placeholder='Enter Question' name='q"+flag+"' id='q"+flag+"' data-type= 'rating' ><br><input placeholder = 'Enter Answer' data-anstype='value' type='text' class='ratingques'  id='ans_"+flag+"'></div><br>"
+                $("#addquestionshere").append(temp); 
+            }
+            flag++;
+        }
+    </script>
+
+    <!-- Sends responses back -->
+        <script>
+        function createjson(){
+            var username = '{{username}}'
+            var email = '{{email}}'
+            json = []
+            for( var i = 0; i < flag; i++){
+                try{
+                    var element = document.getElementById("ans_"+i);
+                    var datatype = element.getAttribute("data-anstype");
+                    if(datatype == "rating"){
+                        var ans = element.selectedIndex;
+                        var obj ={
+                            "question": document.getElementById("q"+i).value,
+                            "answer":ans,
+                        }
+                        json.push(obj);
+                    }
+                    if(datatype == "multiple"){
+                        var ans
+                        if (element.checked == true)
+                        {
+                            ans = "option1";
+                        }
+                        else{
+                            for(var j=2;j<=4;j++){
+                                element1 = document.getElementById("ans_"+i+"_"+j)
+                                if(element1.checked == true){
+                                    ans = "option"+j;
+                                    break;
+                                }
+
+                            }
+                        }
+                        if(ans!=0){
+                            var obj ={
+                                "question":document.getElementById("q"+i).value,
+                                "answer":ans,
+                            }
+                            json.push(obj);
+                        }
+
+                    }
+                    if(datatype == "value"){
+                        var ans = document.getElementById("ans_"+i).value;
+                        var obj ={
+                            "question":document.getElementById("q"+i).value,
+                            "answer":ans,
+                        }
+                        json.push(obj);
+                    }
+                }
+                catch(err){
+                    continue
+                }
+                
+            }
+            data ='{{survey.json}}'
+            data =data.replaceAll('&quot;','"')
+            data1 = JSON.parse(data)
+            if(json.length == data1.length)
+                sendansback(json)
+            else{
+                alert("Fill All the Questions");
+            }
+        }
+        
+    </script>
+    <input type="text" style="visibility: hidden;" id="starttime">
+    <script>
+        function starttime(){
+            var n = new Date().toLocaleString();
+            document.getElementById("starttime").value = n;
+        }
+    </script>
+    <script>
+        function sendansback(json){
+            endtime = new Date().toLocaleString();
+            $.ajax({
+                type: 'GET',
+                url : "sendansback",
+                method:"GET",
+                data : { 
+                    "json":JSON.stringify(json), 
+                    "email":document.getElementById('stores_email').value ,
+                    "anonymous" : document.getElementById("stores_anonymous").value,
+                    "surveyid" :'{{surveyid}}',
+                    "starttime":document.getElementById("starttime").value,
+                    "endtime":endtime
+                },
+                success: function(response){
+                    window.location.href = response;
+                },
+                error: function(response){
+                    alert("some error occured please contact system admin")
+                }
+            });
+        }
+    </script>
+
+
+</body>
+</html>

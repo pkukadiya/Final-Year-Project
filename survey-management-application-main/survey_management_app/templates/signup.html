@@ -1,0 +1,68 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title -->
+    <title>Signup</title>
+
+    <!-- Css files -->
+    <link rel="stylesheet" href="{%static 'css/login.css'%}">
+    <link rel="stylesheet" href="{%static 'css/index.css'%}">
+
+    <!-- Font  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+      #loginbox{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 90vh;
+      }
+    </style>
+</head>
+<body>
+  <div id="header">
+    <a id="indeximg" href="index"><div id="left">
+        <img src="{%static 'images/logo.svg'%}" alt="" id="logo">
+    </div></a>
+  </div>
+  <div id="outerbox">
+    <div id="loginbox">
+      <h1>SignUp</h1>
+      <div id="loginform">
+        <div id="error">{%for message in messages%}{{message}}{%endfor%}</div>
+        <form action="signupuser" method="POST" enctype="multipart/form-data">
+          {%csrf_token%}
+          <label  id="username" for="username">Username</label>
+          <input type="text" id="username_box" name="name" required>
+          <label  id="email" for="email">Email</label>
+          <input type="email" id="email_box" name="email" required>
+          <label id="password" for="password">Password</label>
+          <input id="password_box" type="password" name="password" required>
+          <label id="cpassword" for="cpassword">Confirm Password</label>
+          <input id="cpassword_box" type="password" name="cpassword" required>
+          <input type="submit" id="signup_button" value="Signup">
+          <p id="new">Already have an account? <a id="signup" href="login">Login</a></p>
+        </form>
+      </div>
+    </div> 
+    <div>
+      <img id="right_img_signup" src="{%static 'images/right_img_signup.svg'%}" alt="">
+    </div>
+  </div>  
+  <script>
+    var data = document.getElementById("error").innerHTML;
+    if (data == ''){
+      document.getElementById("error").style.display = "none";
+    }
+  </script>
+</body>
+</html>
