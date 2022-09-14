@@ -135,8 +135,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'w1855402@my.wesminster.ac.uk'
-EMAIL_HOST_PASSWORD = 'app password here'
+EMAIL_HOST_USER = 'kukadiyapiyush0@gmail.com'
+EMAIL_HOST_PASSWORD = 'vnwwktuiqxtatanm'
 
 CRONJOBS = [
     ('*/1440 * * * *', 'survey_management_project.survey_management_app.cronjob')
